@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jokenpô - Pedra, Papel, Tesoura</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .choice {
+            width: 100px;
+            height: 100px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .choice:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .choice img {
+            width: 100%;
+            height: auto;
+        }
+
+        .result {
+            margin: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .btn-restart {
+            margin: 5px 0px 100px 0px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-restart:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-restart:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .choice.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .computer-choice {
+            margin: 20px auto;
+            width: 100px;
+            height: 100px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+        }
+
+        .computer-choice img {
+            width: 100%;
+            height: auto;
+        }
+
+        .final-result {
+            margin: 20px auto;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .final-result img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h2>Trabalho Atividade 03 - Marcos Oliveira</h2>
+    <h3>Jokenpô: Pedra, Papel e Tesoura</h3>
+
+    <!-- Divs Imagens -->
+    <div class="choices">
+        <div class="choice" id="Pedra" onclick="play('Pedra')">
+            <img src="Midia/Pedra.png" alt="Pedra">
+        </div>
+        <div class="choice" id="Papel" onclick="play('Papel')">
+            <img src="Midia/Papel.png" alt="Papel">
+        </div>
+        <div class="choice" id="Tesoura" onclick="play('Tesoura')">
+            <img src="Midia/Tesoura.png">
+        </div>
+    </div>
+    <div class="result" id="result">Faça sua escolha!</div>
+
+    <div class="computer-choice" id="computerChoice">
+        <!-- Imagem da escolha do computador será exibida aqui -->
+    </div>
+
+    <div class="result" id="gameResult"></div>
+
+    <div class="final-result" id="finalResultImage">
+        <!-- Imagem do resultado final será exibida aqui -->
+    </div>
+
+    <button class="btn-restart" id="restartButton" onclick="restartGame()" disabled>Reiniciar</button>
+
+    <script>
+        function play(userChoice) {
+            // Desativar todas as opções após a escolha
+            const allChoices = document.querySelectorAll('.choice');
+            allChoices.forEach(choice => {
+                choice.classList.add('disabled');
+            });
+
+            // Destacar a escolha do jogador
+            const playerChoiceElement = document.getElementById(userChoice);
+            playerChoiceElement.style.border = '3px solid orange';
+            playerChoiceElement.style.boxShadow = '0 4px 8px orange';
+
+            // Lógica do jogo
+            const choices = ['Pedra', 'Papel', 'Tesoura'];
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+            let result = '';
+            let resultImage = '';
+
+            if (userChoice === computerChoice) {
+                result = 'Empate!';
+                resultImage = 'Midia/empate.png';
+            } else if (
+                (userChoice === 'Pedra' && computerChoice === 'Tesoura') ||
+                (userChoice === 'Papel' && computerChoice === 'Pedra') ||
+                (userChoice === 'Tesoura' && computerChoice === 'Papel')
+            ) {
+                result = 'Você venceu!';
+                resultImage = 'Midia/vitoria.png';
+            } else {
+                result = 'Você perdeu!';
+                resultImage = 'Midia/derrota.png';
+            }
+
+            // Atualizar texto de escolhas e resultado
+            document.getElementById('result').innerText = `Você escolheu ${userChoice}, o computador escolheu ${computerChoice}.`;
+
+            // Atualizar a imagem da escolha do computador
+            const computerChoiceDiv = document.getElementById('computerChoice');
+            computerChoiceDiv.innerHTML = `<img src="Midia/PC_${computerChoice}.png" alt="${computerChoice}">`;
+
+            // Mostrar o resultado abaixo da escolha do computador
+            document.getElementById('gameResult').innerText = result;
+
+            // Atualizar a imagem do resultado final
+            const finalResultDiv = document.getElementById('finalResultImage');
+            finalResultDiv.innerHTML = `<img src="${resultImage}" alt="${result}">`;
+
+            // Ativar botão de reiniciar
+            document.getElementById('restartButton').disabled = false;
+        }
+
+        function restartGame() {
+            // Reiniciar texto do resultado
+            document.getElementById('result').innerText = 'Faça sua escolha!';
+            document.getElementById('gameResult').innerText = '';
+
+            // Reativar todas as opções
+            const allChoices = document.querySelectorAll('.choice');
+            allChoices.forEach(choice => {
+                choice.classList.remove('disabled');
+                choice.style.border = '2px solid #ccc';
+                choice.style.boxShadow = 'none';
+            });
+
+            // Limpar imagem da escolha do computador
+            document.getElementById('computerChoice').innerHTML = '';
+
+            // Limpar imagem do resultado final
+            document.getElementById('finalResultImage').innerHTML = '';
+
+            // Desativar botão de reiniciar
+            document.getElementById('restartButton').disabled = true;
+        }
+    </script>
+</body>
+</html>
